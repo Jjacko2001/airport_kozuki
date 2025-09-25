@@ -54,7 +54,14 @@ interface Avion {
   etat: string;
   type: string;
   capacite: number;
-  ////add ceki est à afficher avec nom de var hangar et piste
+
+  ////add ceki est à afficher avec nom de var hangar et piste (Fait)
+  hangar: {
+    id: number;
+  };
+  piste: {
+    id: number;
+  };
 }
 
 const avions = ref<Avion[]>([]);

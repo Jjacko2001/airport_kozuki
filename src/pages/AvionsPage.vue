@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, onMounted} from "vue";
+import {ref} from "vue";
 import AvionForm from "../components/AvionForm.vue";
 import AvionList from "../components/AvionList.vue";
 import {getAvions} from "../api/avions.ts"
