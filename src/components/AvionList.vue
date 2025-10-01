@@ -10,61 +10,138 @@
         <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Type</th>
         <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Etat</th>
         <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Piste</th>
-        <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Hangar</th>
+        <!--<th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Hangar</th>-->
         <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Capacité</th>
         <th class="px-6 py-3 text-center text-sm font-medium text-gray-600">Actions</th>
       </tr>
       </thead>
       <tbody class="divide-y divide-gray-200">
-      <tr v-for="(avion, index) in avions" :key="avion.immatriculation" class="hover:bg-gray-50">
+      <tr v-for="(avion, index) in avions" :key="avion.id" class="hover:bg-gray-50"
+      >
         <td class="px-6 py-4 text-sm text-gray-700">{{ index + 1 }}</td>
         <td class="px-6 py-4 text-sm text-gray-700">{{ avion.immatriculation }}</td>
         <td class="px-6 py-4 text-sm text-gray-700">{{ avion.type }}</td>
         <td class="px-6 py-4 text-sm text-gray-700">{{ avion.etat }}</td>
-        <td class="px-6 py-4 text-sm text-gray-700">{{ avion.hangar.id }}</td>
+        <!--<td class="px-6 py-4 text-sm text-gray-700">{{ avion.hangar.id }}</td>-->
         <td class="px-6 py-4 text-sm text-gray-700">{{ avion.piste.id }}</td>
         <td class="px-6 py-4 text-sm text-gray-700">{{ avion.capacite }}</td>
         <td class="px-6 py-4 flex justify-center space-x-3">
-          <EyeIcon
-              class="w-5 h-5 text-blue-500 cursor-pointer hover:text-blue-700"
-              @click="voirAvion(avion)"
-          />
+
           <PencilIcon
               class="w-5 h-5 text-green-500 cursor-pointer hover:text-green-700"
-              @click="modifierAvion(avion)"
+              @click="ouvrirModal(avion)"
           />
           <TrashIcon
               class="w-5 h-5 text-red-500 cursor-pointer hover:text-red-700"
-              @click="supprimerAvion(avion.immatriculation)"
+              @click="supprimerAvion(avion.id)"
           />
         </td>
       </tr>
       </tbody>
     </table>
+
+
+
+
+
+
+
+
+    <div
+        v-if="showModal"
+        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+    >
+      <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl">
+        <h3 class="text-xl font-semibold mb-4">Modifier l'Avion</h3>
+
+        <form @submit.prevent="mettreAJourAvion" class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Immatriculation</label>
+            <input
+                v-model="avionSelectionne.immatriculation"
+                type="text"
+                class="mt-1 w-full border rounded-lg p-2"
+                disabled
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Type</label>
+            <input
+                v-model="avionSelectionne.type"
+                type="text"
+                class="mt-1 w-full border rounded-lg p-2"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700">État</label>
+            <input
+                v-model="avionSelectionne.etat"
+                type="text"
+                class="mt-1 w-full border rounded-lg p-2"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Capacité</label>
+            <input
+                v-model.number="avionSelectionne.capacite"
+                type="number"
+                class="mt-1 w-full border rounded-lg p-2"
+            />
+          </div>
+
+          <div class="col-span-2 flex justify-end gap-2 mt-4">
+            <button
+                type="button"
+                class="bg-gray-200 px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-300"
+                @click="fermerModal"
+            >
+              Annuler
+            </button>
+            <button
+                type="submit"
+                class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+            >
+              Mettre à jour
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { EyeIcon, PencilIcon, TrashIcon } from "@heroicons/vue/24/outline";
-import { getAvions, deleteAvion } from "../api/avions.ts";
+import {  PencilIcon, TrashIcon } from "@heroicons/vue/24/outline";
+import { getAvions, deleteAvion, updateAvions } from "../api/avions.ts";
 
 interface Avion {
-  immatriculation: number;
+  id: number;
+  immatriculation: string;
   etat: string;
   type: string;
   capacite: number;
 
+
   ////add ceki est à afficher avec nom de var hangar et piste (Fait)
-  hangar: {
-    id: number;
-  };
-  piste: {
-    id: number;
-  };
+ // hangar: { id: number } ;
+  piste: { id: number } ;
 }
 
 const avions = ref<Avion[]>([]);
+const showModal = ref(false);
+const avionSelectionne = ref<Avion>({
+  id:0,
+  immatriculation: "",
+  etat: "",
+  type: "",
+  capacite: 0,
+  //hangar: { id: 0 },
+  piste: { id: 0 },
+});
 
 const chargerAvions = async () => {
   try {
@@ -75,19 +152,53 @@ const chargerAvions = async () => {
   }
 };
 
-const voirAvion = (avion: Avion) => {
-  alert(`Voir détails de l'avion : ${avion.immatriculation}`); //vais dev un bail visuelle tetre un card ou un bail
+const ouvrirModal = (avion: Avion) => {
+  avionSelectionne.value = { ...avion };
+  showModal.value = true;
 };
 
-const modifierAvion = (avion: Avion) => {
-  alert(`Modifier l'avion : ${avion.immatriculation}`); //vais dev un bail visuelle tetre un card ou un bail
+const fermerModal = () => {
+  showModal.value = false;
 };
+
+
+const mettreAJourAvion = async () => {
+  try {
+    const id = avionSelectionne.value.id;
+    const data = {
+      type: avionSelectionne.value.type,
+      etat: avionSelectionne.value.etat,
+      capacite: avionSelectionne.value.capacite,
+      //hangar: avionSelectionne.value.hangar,
+      piste: avionSelectionne.value.piste,
+    };
+
+    await updateAvions(id, data);
+
+
+    const index = avions.value.findIndex(a => a.id === id);
+    if (index !== -1) {
+      avions.value[index] = { ...avionSelectionne.value };
+    }
+
+    fermerModal();
+    alert("maj fait");
+  } catch (error) {
+
+
+
+
+    alert("Une erreur est survenue ");
+  }
+};
+
+
 
 const supprimerAvion = async (id: number) => {
   if (confirm("Voulez-vous vraiment supprimer cet avion ?")) {
     try {
       await deleteAvion(id);
-      avions.value = avions.value.filter((a) => a.immatriculation !== id);
+      avions.value = avions.value.filter((a) => a.id !== id);
     } catch (error) {
       console.error("Erreur lors de la suppression :", error);
     }

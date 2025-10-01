@@ -9,8 +9,17 @@ import { RouterLink } from "vue-router"
   <div class="max-w-5xl mx-auto px-4 py-8">
     <div class="text-center mb-8">
       <h1 class="text-3xl font-bold text-gray-800">Bienvenue à l’Aéroport Kozuki</h1>
-      <p class="text-gray-500">SI Kozu Minimaliste</p>
+
     </div>
+
+
+
+    <div class="w-full h-[50vh] overflow-hidden">
+      <video autoplay muted loop playsinline class="w-full h-full object-cover">
+        <source src="/video.mp4" type="video/mp4" />
+      </video>
+    </div>
+    <br>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
       <RouterLink to="/avions" class="hover:text-black-300">

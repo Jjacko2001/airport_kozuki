@@ -5,7 +5,7 @@ import { RouterLink } from "vue-router"
 </script>
 
 <template>
-  <nav class="bg-blue-900 text-white shadow">
+  <nav class="bg-gray-900 text-white shadow">
     <div class="max-w-10xl mx-auto px-1 flex justify-between h-16 items-center">
       <div class="flex items-center space-x-2">
         <span class="text-lg font-bold"><RouterLink to="/" class="hover:text-blue-300">✈️ Aéroport Kozuki</RouterLink></span>
