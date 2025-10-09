@@ -10,7 +10,7 @@
         <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Type</th>
         <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Etat</th>
         <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Piste</th>
-        <!--<th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Hangar</th>-->
+        <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Hangar</th>
         <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Capacité</th>
         <th class="px-6 py-3 text-center text-sm font-medium text-gray-600">Actions</th>
       </tr>
@@ -22,8 +22,8 @@
         <td class="px-6 py-4 text-sm text-gray-700">{{ avion.immatriculation }}</td>
         <td class="px-6 py-4 text-sm text-gray-700">{{ avion.type }}</td>
         <td class="px-6 py-4 text-sm text-gray-700">{{ avion.etat }}</td>
-        <!--<td class="px-6 py-4 text-sm text-gray-700">{{ avion.hangar.id }}</td>-->
         <td class="px-6 py-4 text-sm text-gray-700">{{ avion.piste.id }}</td>
+        <td class="px-6 py-4 text-sm text-gray-700">{{ avion.hangar?.id ?? "—" }}</td>
         <td class="px-6 py-4 text-sm text-gray-700">{{ avion.capacite }}</td>
         <td class="px-6 py-4 flex justify-center space-x-3">
 
@@ -92,6 +92,17 @@
             />
           </div>
 
+          <!-- ✅ Champ pour modifier ou supprimer le hangar -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Hangar ID</label>
+            <input
+                v-model.number="hangarIdInput"
+                type="number"
+                class="mt-1 w-full border rounded-lg p-2"
+                placeholder="Laisser vide pour retirer le hangar"
+            />
+          </div>
+
           <div class="col-span-2 flex justify-end gap-2 mt-4">
             <button
                 type="button"
@@ -126,8 +137,9 @@ interface Avion {
   capacite: number;
 
 
+
   ////add ceki est à afficher avec nom de var hangar et piste (Fait)
- // hangar: { id: number } ;
+  hangar: { id: number } | null ;
   piste: { id: number } ;
 }
 
@@ -139,7 +151,7 @@ const avionSelectionne = ref<Avion>({
   etat: "",
   type: "",
   capacite: 0,
-  //hangar: { id: 0 },
+  hangar: { id: 0 },
   piste: { id: 0 },
 });
 
@@ -154,6 +166,7 @@ const chargerAvions = async () => {
 
 const ouvrirModal = (avion: Avion) => {
   avionSelectionne.value = { ...avion };
+  hangarIdInput.value = avion.hangar?.id ?? null;
   showModal.value = true;
 };
 
@@ -161,6 +174,7 @@ const fermerModal = () => {
   showModal.value = false;
 };
 
+const hangarIdInput = ref<number | null>(null);
 
 const mettreAJourAvion = async () => {
   try {
@@ -169,7 +183,7 @@ const mettreAJourAvion = async () => {
       type: avionSelectionne.value.type,
       etat: avionSelectionne.value.etat,
       capacite: avionSelectionne.value.capacite,
-      //hangar: avionSelectionne.value.hangar,
+      hangarId: hangarIdInput.value,
       piste: avionSelectionne.value.piste,
     };
 
@@ -178,7 +192,9 @@ const mettreAJourAvion = async () => {
 
     const index = avions.value.findIndex(a => a.id === id);
     if (index !== -1) {
-      avions.value[index] = { ...avionSelectionne.value };
+      avions.value[index] = {
+        ...avionSelectionne.value,
+        hangar: hangarIdInput.value ? { id: hangarIdInput.value } : null,};
     }
 
     fermerModal();
