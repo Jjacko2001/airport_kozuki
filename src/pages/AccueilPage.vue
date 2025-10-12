@@ -21,23 +21,31 @@ import { RouterLink } from "vue-router"
     </div>
     <br>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <RouterLink to="/avions" class="hover:text-black-300">
-        <div class="bg-white shadow rounded-xl p-6 text-center">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+
+      <RouterLink to="/avions">
+        <div class="bg-white shadow rounded-xl p-6 text-center hover:bg-green-100 transition">
           <p class="text-4xl font-bold text-blue-600">5</p>
-          <p class="text-blue-600 hover:text-black-300">Avions</p>
+          <p class="text-blue-600 hover:text-black">Avions</p>
         </div>
       </RouterLink>
 
-      <RouterLink to="/pistes" class="hover:text-black-300">
-        <div class="bg-white shadow rounded-xl p-6 text-center">
+      <RouterLink to="/vols">
+        <div class="bg-white shadow rounded-xl p-6 text-center hover:bg-green-100 transition">
+          <p class="text-4xl font-bold text-yellow-600">9</p>
+          <p class="text-yellow-600 hover:text-black">Vols</p>
+        </div>
+      </RouterLink>
+
+      <RouterLink to="/pistes">
+        <div class="bg-white shadow rounded-xl p-6 text-center hover:bg-green-100 transition">
           <p class="text-4xl font-bold text-green-600">4</p>
           <p class="text-green-600">Pistes</p>
         </div>
       </RouterLink>
 
-      <RouterLink to="/hangars" class="hover:text-black-300">
-        <div class="bg-white shadow rounded-xl p-6 text-center">
+      <RouterLink to="/hangars" >
+        <div class="bg-white shadow rounded-xl p-6 text-center hover:bg-green-100 transition">
           <p class="text-4xl font-bold text-purple-600">4</p>
           <p class="text-purple-600">Hangars</p>
         </div>

@@ -26,9 +26,14 @@
         <td class="px-6 py-4 text-sm text-gray-700">{{ hangar.etat }}</td>
         <td class="px-6 py-4 text-sm text-gray-700">{{ hangar.capacite }}</td>
         <td class="px-6 py-4 text-sm text-gray-700">
-          <div v-for="a in hangar.avions" :key="a.immatriculation">
-            avion-{{ a.immatriculation }}
-          </div>
+          <template v-if="hangar.avions && hangar.avions.length">
+            <div v-for="a in hangar.avions" :key="a.immatriculation">
+              avion-{{ a.immatriculation }}
+            </div>
+          </template>
+          <template v-else>
+            <span class="italic text-gray-700">Aucun avion</span>
+          </template>
         </td>
 
         <td class="px-6 py-4 flex justify-center space-x-3">

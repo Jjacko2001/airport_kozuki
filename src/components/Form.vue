@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { reactive } from "vue";
 
+//script factorisé par gpt
 type Field = {
   name: string;
   label: string;
@@ -59,3 +60,4 @@ async function handleSubmit() {
     </form>
   </div>
 </template>
+

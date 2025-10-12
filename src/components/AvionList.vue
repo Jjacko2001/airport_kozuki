@@ -6,12 +6,14 @@
       <thead class="bg-gray-100">
       <tr>
         <th class="px-6 py-3 text-left text-sm font-medium text-red-600">#</th>
+        <th class="px-6 py-3 text-left text-sm font-medium text-blue-600">Id</th>
         <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Immatriculation</th>
         <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Type</th>
         <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Etat</th>
         <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Piste</th>
         <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Hangar</th>
         <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">Capacité</th>
+        <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">List Vols</th>
         <th class="px-6 py-3 text-center text-sm font-medium text-gray-600">Actions</th>
       </tr>
       </thead>
@@ -19,11 +21,19 @@
       <tr v-for="(avion, index) in avions" :key="avion.id" class="hover:bg-gray-50"
       >
         <td class="px-6 py-4 text-sm text-gray-700">{{ index + 1 }}</td>
+        <td class="px-6 py-4 text-sm text-gray-700">{{ avion.id }}</td>
         <td class="px-6 py-4 text-sm text-gray-700">{{ avion.immatriculation }}</td>
         <td class="px-6 py-4 text-sm text-gray-700">{{ avion.type }}</td>
         <td class="px-6 py-4 text-sm text-gray-700">{{ avion.etat }}</td>
         <td class="px-6 py-4 text-sm text-gray-700">{{ avion.piste.id }}</td>
         <td class="px-6 py-4 text-sm text-gray-700">{{ avion.hangar?.id ?? "—" }}</td>
+        <td class="px-6 py-4 text-sm text-gray-700">{{ avion.capacite }}</td>
+        <td class="px-6 py-4 text-sm text-gray-700">
+          <div v-for="v in avion.vols" :key="v.id">
+            vol-{{ v.numero }}
+          </div>
+          <!--Voir le ifelse vour afficher le else list null : Aucun Vol-->
+        </td>
         <td class="px-6 py-4 text-sm text-gray-700">{{ avion.capacite }}</td>
         <td class="px-6 py-4 flex justify-center space-x-3">
 
@@ -129,6 +139,11 @@ import { ref, onMounted } from "vue";
 import {  PencilIcon, TrashIcon } from "@heroicons/vue/24/outline";
 import { getAvions, deleteAvion, updateAvions } from "../api/avions.ts";
 
+interface Vol {
+
+  id: number;
+  numero: number;
+}
 interface Avion {
   id: number;
   immatriculation: string;
@@ -141,6 +156,8 @@ interface Avion {
   ////add ceki est à afficher avec nom de var hangar et piste (Fait)
   hangar: { id: number } | null ;
   piste: { id: number } ;
+
+  vols: Vol[]
 }
 
 const avions = ref<Avion[]>([]);
@@ -153,6 +170,7 @@ const avionSelectionne = ref<Avion>({
   capacite: 0,
   hangar: { id: 0 },
   piste: { id: 0 },
+  vols: []
 });
 
 const chargerAvions = async () => {
@@ -161,7 +179,7 @@ const chargerAvions = async () => {
     avions.value = response.data;
   } catch (error) {
     console.error("Erreur lors du chargement des avions :", error);
-  }
+  } //resolu
 };
 
 const ouvrirModal = (avion: Avion) => {

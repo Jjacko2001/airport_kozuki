@@ -15,6 +15,7 @@ import { RouterLink } from "vue-router"
       <div class="hidden md:flex space-x-8">
         <RouterLink to="/" class="hover:text-blue-300">Accueil</RouterLink>
         <RouterLink to="/avions" class="hover:text-blue-300">✈️Avions</RouterLink>
+        <RouterLink to="/vols" class="hover:text-blue-300">✈Vols</RouterLink>
         <RouterLink to="/pistes" class="hover:text-blue-300">🛤️Pistes</RouterLink>
         <RouterLink to="/hangars" class="hover:text-blue-300">🏢Hangars</RouterLink>
       </div>
