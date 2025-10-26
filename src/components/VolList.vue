@@ -68,6 +68,12 @@
               class="w-5 h-5 text-red-500 cursor-pointer hover:text-red-700"
               @click="supprimerVol(vol.id)"
           />
+          <button
+              class="text-sm text-blue-600 hover:underline"
+              @click="ouvrirHistorique(vol.id)"
+          >
+            Historique
+          </button>
         </td>
       </tr>
       </tbody>
@@ -136,13 +142,38 @@
         </form>
       </div>
     </div>
+
+
+    <!-- 🕓 Modal Historique -->
+    <div v-if="showHistorique" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+        <h3 class="text-xl font-semibold mb-4">Historique du vol #{{ volIdHistorique }}</h3>
+
+        <li v-for="(h, idx) in historique" :key="idx" class="py-2 text-sm">
+          <span class="font-semibold text-gray-800">{{ h.status }}</span>
+          <span class="text-gray-500 ml-2">({{ formatDate(h.dateChangement) }})</span>
+        </li>
+
+        <div class="flex justify-end">
+          <button @click="fermerHistorique" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400">
+            Fermer
+          </button>
+        </div>
+      </div>
+    </div>
+
+
   </div>
 </template>
+
+
+
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { PencilIcon, TrashIcon } from "@heroicons/vue/24/outline";
 import { getVols, deleteVol, updateVol } from "../api/vols.ts";
+import { getVolHistorique } from "../api/volHistorique.ts";
 
 interface Vol {
   id: number;
@@ -154,8 +185,16 @@ interface Vol {
   avion: { id: number } | null;
 }
 
+interface VolHistorique {
+  status: string;
+  dateChangement: string;
+}
+
 const vols = ref<Vol[]>([]);
 const showModal = ref(false);
+const showHistorique = ref(false);
+const volIdHistorique = ref<number | null>(null);
+const historique = ref<VolHistorique[]>([]);
 const volSelectionne = ref<Vol>({
   id: 0,
   numero: 0,
@@ -231,6 +270,23 @@ const supprimerVol = async (id: number) => {
     }
   }
 };
+
+const ouvrirHistorique = async (volId: number) => {
+  volIdHistorique.value = volId;
+  try {
+    const res = await getVolHistorique(volId);
+    historique.value = res.data;
+    showHistorique.value = true;
+  } catch (e) {
+    console.error("Erreur lors du chargement de l'historique :", e);
+  }
+};
+
+const fermerHistorique = () => (showHistorique.value = false);
+
+
+
+const formatDate = (d: string) => new Date(d).toLocaleString("fr-FR");
 
 onMounted(chargerVols);
 </script>
